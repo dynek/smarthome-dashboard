@@ -1,5 +1,6 @@
 // requirements
 if(typeof __COMMON_JS === 'undefined') { throw new Error("common.js is required and was not yet loaded!"); }
+if(typeof __HOMEAUTOMATION_JS === 'undefined') { throw new Error("homeautomation.js is required and was not yet loaded!"); }
 
 // include guard
 if(typeof __WEBSOCKETCLIENT_JS !== 'undefined') { throw new Error("websocketclient.js was already included!"); }
@@ -40,7 +41,8 @@ var webSocketClient = function() {
 	       common.logMessage("it doesn't look like JSON: " + message.data);
 	       return;
 	    }
-            $("#container").append("<pre>" + JSON.stringify(data, null, 2) + "</pre>");
+	    // handling message to homeautomation
+	    homeautomation.processJSON(data);
         };
     };
 
@@ -48,4 +50,5 @@ var webSocketClient = function() {
     return {
         connect: this.connect,
     };
+
 }();
