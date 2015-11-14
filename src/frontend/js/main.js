@@ -1,3 +1,6 @@
+// first of all, let's be strict!
+"use strict";
+
 // requirements
 if(typeof __COMMON_JS === 'undefined') { throw new Error("common.js is required and was not yet loaded!"); }
 if(typeof __WEBSOCKETCLIENT_JS === 'undefined') { throw new Error("websocketclient.js is required and was not yet loaded!"); }

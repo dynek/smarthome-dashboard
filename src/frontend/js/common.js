@@ -1,3 +1,6 @@
+// first of all, let's be strict!
+"use strict";
+
 // include guard
 if(typeof __COMMON_JS !== 'undefined') { throw new Error("common.js was already included!"); }
 var __COMMON_JS = null;
@@ -6,13 +9,13 @@ var __COMMON_JS = null;
 var common = function() {
 
    // properties
-   var debug = false;
+   var debug = false,
 
    // activate debug
-   setDebug = function() { this.debug = true; this.logMessage("debug mode activated"); };
+   setDebug = function() { this.debug = true; this.logMessage("debug mode activated"); },
 
    // log message to browser's console
-   logMessage = function(message) { if(this.debug) { console.log("[LOG] " + message); } };
+   logMessage = function(message) { if(this.debug) { console.log("[LOG] " + message); } },
 
    // reload page with optional timeout
    reloadPage = function(timeout) {
@@ -27,9 +30,9 @@ var common = function() {
 
    // expose functions
    return {
-      setDebug: this.setDebug,
-      logMessage: this.logMessage,
-      reloadPage: this.reloadPage,
+      setDebug: setDebug,
+      logMessage: logMessage,
+      reloadPage: reloadPage,
    };
 
 }();

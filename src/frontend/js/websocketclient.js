@@ -1,3 +1,6 @@
+// first of all, let's be strict!
+"use strict";
+
 // requirements
 if(typeof __COMMON_JS === 'undefined') { throw new Error("common.js is required and was not yet loaded!"); }
 if(typeof __HOMEAUTOMATION_JS === 'undefined') { throw new Error("homeautomation.js is required and was not yet loaded!"); }
@@ -10,7 +13,7 @@ var __WEBSOCKETCLIENT_JS = null;
 var webSocketClient = function() {
 
     // manage connection to remote server
-    connect = function(settings) {
+    var connect = function(settings) {
         common.logMessage("initiating connection to host: " + settings.ws_host + " - port: " + settings.ws_port);
 
 	// for mozilla: "Starting in Gecko 6.0, the constructor is prefixed; you will need to use MozWebSocket()"
@@ -48,7 +51,7 @@ var webSocketClient = function() {
 
     // expose functions
     return {
-        connect: this.connect,
+        connect: connect,
     };
 
 }();
