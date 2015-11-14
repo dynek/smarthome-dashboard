@@ -19,7 +19,7 @@ $(document).ready(function () {
   // settings passed to webSocketClient.connect
   var settings = {
     ws_host: 'server',
-    ws_port: '8888',
+    ws_port: 8888,
   };
 
   // connect to remote websocket server

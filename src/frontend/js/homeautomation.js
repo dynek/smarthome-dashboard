@@ -8,7 +8,7 @@ if(typeof __COMMON_JS === 'undefined') { throw new Error("common.js is required 
 if(typeof __HOMEAUTOMATION_JS !== 'undefined') { throw new Error("homeautomation.js was already included!"); }
 var __HOMEAUTOMATION_JS = null;
 
-// common module
+// home automation module
 var homeautomation = function() {
 
   // process JSON
@@ -34,8 +34,6 @@ var homeautomation = function() {
       default:
         throw new Error("unknown action '" + json.action + "' specified in received json");
     }
-
-
   };
 
   // expose functions

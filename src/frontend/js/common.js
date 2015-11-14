@@ -21,11 +21,11 @@ var common = function() {
   reloadPage = function(timeout) {
     if (typeof timeout === 'undefined' || timeout !== parseInt(timeout, 10)) {
       this.logMessage("reloading page straight away");
-      window.location.reload();
+      timeout = 0;
     } else {
       this.logMessage("reloading page in " + timeout + "ms");
-      setTimeout(function(){ window.location.reload() }, timeout);
     }
+    setTimeout(function(){ window.location.reload() }, timeout);
   };
 
   // expose functions

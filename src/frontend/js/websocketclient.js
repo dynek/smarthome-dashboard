@@ -14,6 +14,8 @@ var webSocketClient = function() {
 
   // manage connection to remote server
   var connect = function(settings) {
+    if(typeof settings.ws_host === 'undefined' || typeof settings.ws_port === 'undefined') { throw new Error("missing either host or port required to connect to websocket server"); }
+
     common.logMessage("initiating connection to host: " + settings.ws_host + " - port: " + settings.ws_port);
 
     // for mozilla: "Starting in Gecko 6.0, the constructor is prefixed; you will need to use MozWebSocket()"
