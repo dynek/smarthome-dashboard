@@ -11,16 +11,16 @@ var __HOMEAUTOMATION_JS = null;
 // common module
 var homeautomation = function() {
 
-   // process JSON
-   var processJSON = function(data) {
-      common.logMessage("processing JSON data");
+  // process JSON
+  var processJSON = function(data) {
+    common.logMessage("processing JSON data");
 
-      $("#container").append("<pre>" + JSON.stringify(data, null, 2) + "</pre>");
-   };
+    $("#container").append("<pre>" + JSON.stringify(data, null, 2) + "</pre>");
+  };
 
-   // expose functions
-   return {
-      processJSON: processJSON,
-   };
+  // expose functions
+  return {
+    processJSON: processJSON,
+  };
 
 }();

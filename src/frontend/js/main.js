@@ -14,14 +14,14 @@ common.setDebug();
 
 // wait that dom be ready before starting the party
 $(document).ready(function () {
-    common.logMessage("dom ready");
+  common.logMessage("dom ready");
 
-    // settings passed to webSocketClient.connect
-    var settings = {
-        ws_host: 'server',
-	ws_port: '8888'
-    };
+  // settings passed to webSocketClient.connect
+  var settings = {
+    ws_host: 'server',
+    ws_port: '8888',
+  };
 
-    // connect to remote websocket server
-    webSocketClient.connect(settings);
+  // connect to remote websocket server
+  webSocketClient.connect(settings);
 });
