@@ -20,10 +20,9 @@ http_port = 2080,
 ws_port = 8888,
 hc2_settings = {
   polling     : 5, // seconds
-  credentials : "<username>:<password>", //username:password
+  credentials : "<username>:<password>",
   host        : "<address/hostname>",
-  port        : 80,
-  api_paths   : { sections: '/api/sections', rooms: '/api/rooms', devices: '/api/devices', }
+  port        : 80
 };
 
 // initialize http server
