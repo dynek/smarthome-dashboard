@@ -9,10 +9,16 @@ var __COMMON_JS = null;
 var common = function() {
 
   // properties
-  var debug = false,
+  var debugKeyWord = "debug",
+  debug = false,
 
-  // activate debug
-  setDebug = function() { this.debug = true; this.logMessage("debug mode activated"); },
+  // activate debug if query string contains "debug" keyword
+  setDebug = function() {
+    if(window.location.search.substring(1).indexOf(debugKeyWord) > -1) {
+      this.debug = true;
+      this.logMessage("debug mode activated");
+    }
+  },
 
   // log message to browser's console
   logMessage = function(message) { if(this.debug) { console.log("[LOG] " + message); } },
