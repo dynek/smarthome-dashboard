@@ -9,7 +9,7 @@ if(typeof __WEBSOCKETCLIENT_JS === 'undefined') { throw new Error("websocketclie
 if(typeof __MAIN_JS !== 'undefined') { throw new Error("main.js was already included!"); }
 var __MAIN_JS = null;
 
-// activate debug mode if "debug" keyword is found in query string
+// activate debug mode if debug keyword is found in query string
 common.setDebug();
 
 // wait that dom be ready before starting the party
