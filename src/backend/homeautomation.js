@@ -11,6 +11,7 @@ var homeAutomation = function() {
   data = null,
   hc2_settings = null,
   clientsCount = 0,
+  timer = null,
 
   // process JSON
   /*processJSON = function(json) {
@@ -36,19 +37,42 @@ var homeAutomation = function() {
   init = function(opts) {
     // save settings
     hc2_settings = opts;
-
-    // start polling information from fibaro homecenter
-    readhc2(true);
   },
 
   // return JSON containing sections, rooms, devices, etc.
   getData = function() {
-    return data;
+    var deferred = Q.defer();
+    // if data is available return straight away
+    if(data !== null) {
+      common.logMessage("DATA FROM CACHE !!!!")
+      deferred.resolve(data);
+      return deferred.promise;
+    } else {
+      // re-run function when timeout occurs
+      // promises required to build reply for clients
+      readhc2()
+      .then(function() {
+        //common.logMessage(JSON.stringify(responses));
+        deferred.resolve(data);
+      }, function (err) {
+        //common.logMessage('Problem with request: ' + err);
+        common.logMessage(err);
+        deferred.reject(err);
+      });
+
+      return deferred.promise;
+    }
   },
 
   // set client count (used in readhc2)
   setClientsCount = function(int) {
     clientsCount = int;
+    // no more client -> clear data, clear timer: in case a client connects straight afterwards (reload page for instance)
+    if(clientsCount == 0) {
+      common.logMessage("no more client clearing cache and timer")
+      data = null;
+      clearTimeout(timer);
+    }
   },
 
   // get data from hc2
@@ -87,24 +111,28 @@ var homeAutomation = function() {
   },
 
   // read data from hc2
-  readhc2 = function(force) {
-    // if at least one client is connected (or if force is passed) poll hc2
-    if(clientsCount >= 1 || force) {
-      common.logMessage("polling data from HC2")
+  readhc2 = function() {
+    // if at least one client is connected poll information from hc2
+    if(clientsCount >= 1) {
+      var deferred  = Q.defer();
+
+      common.logMessage(clientsCount + " client(s) connected: polling data from HC2 to have up to date information");
 
       // promises required to build reply for clients
-      Q.all([ httpGet("/api/sections"), httpGet("/api/rooms"), httpGet("/api/devices") ])
+      Q.all([ httpGet("/api/sections"), httpGet("/api/rooms") /*, httpGet("/api/devices")*/ ])
       .then(function(responses) {
         //common.logMessage(JSON.stringify(responses));
         data = { action: 'print', data: responses };
+        timer = setTimeout(function() { readhc2(); }, hc2_settings.polling * 1000);
+        deferred.resolve();
       }, function (err) {
         //common.logMessage('Problem with request: ' + err);
         common.logMessage(error);
+        deferred.reject(err);
       });
-    }
 
-    // re-run function when timeout occurs
-    setTimeout(function() { readhc2(); }, hc2_settings.polling * 1000);
+      return deferred.promise;
+    }
   };
 
   // expose functions

@@ -30,8 +30,22 @@ var webSocketServer = function () {
         // update home automation module with client count
         homeautomation.setClientsCount(ws.clientsCount);
 
-	// send sections, rooms, devices, etc. to client that connected
-        sendMessage(homeautomation.getData(), clientSocket);
+        // send sections, rooms, devices, etc. to client that just connected
+        //var data = homeautomation.getData();
+        //if(data == null) { // data not yet ready, ask client to retry
+        //  sendMessage({ action: 'retry' }, clientSocket);
+        //} else {
+        //  sendMessage(data, clientSocket);
+        //}
+
+        homeautomation.getData()
+        .then(function(responses) {
+          //common.logMessage(JSON.stringify(responses));
+          sendMessage(responses, clientSocket);
+        }, function (err) {
+          //common.logMessage('Problem with request: ' + err);
+          common.logMessage(err);
+        });
 
         // occurs when a message is received
         clientSocket.on('message', function (data) {
