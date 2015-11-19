@@ -41,26 +41,14 @@ var homeAutomation = function() {
 
   // return JSON containing sections, rooms, devices, etc.
   getData = function() {
-    var deferred = Q.defer();
     // if data is available return straight away
     if(data !== null) {
       common.logMessage("DATA FROM CACHE !!!!")
-      deferred.resolve(data);
-      return deferred.promise;
+      return Promise.resolve(data);
     } else {
       // re-run function when timeout occurs
       // promises required to build reply for clients
-      readhc2()
-      .then(function() {
-        //common.logMessage(JSON.stringify(responses));
-        deferred.resolve(data);
-      }, function (err) {
-        //common.logMessage('Problem with request: ' + err);
-        common.logMessage(err);
-        deferred.reject(err);
-      });
-
-      return deferred.promise;
+      return readhc2();
     }
   },
 
@@ -113,25 +101,21 @@ var homeAutomation = function() {
   // read data from hc2
   readhc2 = function() {
     // if at least one client is connected poll information from hc2
-    if(clientsCount >= 1) {
+    if(clientsCount > 0) {
       var deferred  = Q.defer();
 
       common.logMessage(clientsCount + " client(s) connected: polling data from HC2 to have up to date information");
 
       // promises required to build reply for clients
-      Q.all([ httpGet("/api/sections"), httpGet("/api/rooms") /*, httpGet("/api/devices")*/ ])
-      .then(function(responses) {
-        //common.logMessage(JSON.stringify(responses));
-        data = { action: 'print', data: responses };
-        timer = setTimeout(function() { readhc2(); }, hc2_settings.polling * 1000);
-        deferred.resolve();
-      }, function (err) {
-        //common.logMessage('Problem with request: ' + err);
-        common.logMessage(error);
-        deferred.reject(err);
-      });
-
-      return deferred.promise;
+      return Promise.all([
+        httpGet("/api/sections"),
+        httpGet("/api/rooms")
+      ])
+        .then(function(responses) {
+          data = { action: 'print', data: responses };
+          timer = setTimeout(function() { readhc2(); }, hc2_settings.polling * 1000);
+          return data;
+        });
     }
   };
 
