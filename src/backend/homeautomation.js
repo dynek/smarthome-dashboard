@@ -6,7 +6,6 @@ var homeAutomation = function() {
 
   // properties
   var common = require('./common'),
-  Q = require('q'),
   http = require('http'),
   data = null,
   hc2_settings = null,
@@ -41,26 +40,14 @@ var homeAutomation = function() {
 
   // return JSON containing sections, rooms, devices, etc.
   getData = function() {
-    var deferred = Q.defer();
     // if data is available return straight away
     if(data !== null) {
       common.logMessage("DATA FROM CACHE !!!!")
-      deferred.resolve(data);
-      return deferred.promise;
+      return Promise.resolve(data);
     } else {
       // re-run function when timeout occurs
       // promises required to build reply for clients
-      readhc2()
-      .then(function() {
-        //common.logMessage(JSON.stringify(responses));
-        deferred.resolve(data);
-      }, function (err) {
-        //common.logMessage('Problem with request: ' + err);
-        common.logMessage(err);
-        deferred.reject(err);
-      });
-
-      return deferred.promise;
+      return readhc2();
     }
   },
 
@@ -77,7 +64,6 @@ var homeAutomation = function() {
 
   // get data from hc2
   httpGet = function(path) {
-    var deferred  = Q.defer();
     var options = {
       auth: hc2_settings.credentials,
       host: hc2_settings.host,
@@ -86,52 +72,46 @@ var homeAutomation = function() {
       method: 'GET'
     }, payload = '';
 
-    var request = http.request(options, function (response) {
-      common.logMessage('GET ' + path + ' HTTP status code: ' + response.statusCode);
-      response.setEncoding('utf8');
-      response.on('data', function (chunk) {
-        payload += chunk;
+    return new Promise(function(resolve, reject) {
+      var request = http.request(options, function (response) {
+        common.logMessage('GET ' + path + ' HTTP status code: ' + response.statusCode);
+        response.setEncoding('utf8');
+        response.on('data', function (chunk) {
+          payload += chunk;
+        });
+
+        response.on('end', function(){
+          //resolve the deferred object with the response
+          var tmp = {}; tmp[path] = JSON.parse(payload);
+          resolve(tmp);
+        });
       });
 
-      response.on('end', function(){
-        //resolve the deferred object with the response
-        var tmp = {}; tmp[path] = JSON.parse(payload);
-        deferred.resolve(tmp);
+      request.on('error', function(err) {
+        //if an error occurs reject the deferred
+        reject(err);
       });
+
+      request.end();
     });
-
-    request.on('error', function(err) {
-      //if an error occurs reject the deferred
-      deferred.reject(err);
-    });
-
-    request.end();
-
-    return deferred.promise;
   },
 
   // read data from hc2
   readhc2 = function() {
     // if at least one client is connected poll information from hc2
-    if(clientsCount >= 1) {
-      var deferred  = Q.defer();
-
+    if(clientsCount > 0) {
       common.logMessage(clientsCount + " client(s) connected: polling data from HC2 to have up to date information");
 
       // promises required to build reply for clients
-      Q.all([ httpGet("/api/sections"), httpGet("/api/rooms") /*, httpGet("/api/devices")*/ ])
+      return Promise.all([
+        httpGet("/api/sections"),
+        httpGet("/api/rooms")
+      ])
       .then(function(responses) {
-        //common.logMessage(JSON.stringify(responses));
         data = { action: 'print', data: responses };
         timer = setTimeout(function() { readhc2(); }, hc2_settings.polling * 1000);
-        deferred.resolve();
-      }, function (err) {
-        //common.logMessage('Problem with request: ' + err);
-        common.logMessage(error);
-        deferred.reject(err);
+        return data;
       });
-
-      return deferred.promise;
     }
   };
 
