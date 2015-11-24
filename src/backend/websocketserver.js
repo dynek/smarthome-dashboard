@@ -20,7 +20,7 @@ var webSocketServer = function () {
     });
 
     // within a domain, instanciate websocket server, have it listen and manage client connections
-    socketDomain.run(function() {
+    //socketDomain.run(function() {
       ws = require('websocket.io').listen(port);
 
       // occurs when a client connects
@@ -41,10 +41,13 @@ var webSocketServer = function () {
         homeautomation.getData()
         .then(function(responses) {
           //common.logMessage(JSON.stringify(responses));
+	  common.logMessage("getData success");
           sendMessage(responses, clientSocket);
         }, function (err) {
           //common.logMessage('Problem with request: ' + err);
+	  common.logMessage("getData failed");
           common.logMessage(err);
+          sendMessage({ action: 'print', data: 'could not poll HC2 - hit refresh' }, clientSocket);
         });
 
         // occurs when a message is received
@@ -66,7 +69,7 @@ var webSocketServer = function () {
           }
         });
       });
-    });
+    //});
   },
 
   // send message to one or all clients
