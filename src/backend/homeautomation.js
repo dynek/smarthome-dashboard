@@ -42,7 +42,7 @@ var homeAutomation = function() {
   getData = function() {
     // if data is available return straight away
     if(data !== null) {
-      common.logMessage("DATA FROM CACHE !!!!")
+      common.logMessage("DATA FROM CACHE !!!!");
       return Promise.resolve(data);
     } else {
       // re-run function when timeout occurs
@@ -73,43 +73,50 @@ var homeAutomation = function() {
     }, payload = '';
 
     return new Promise(function(resolve, reject) {
-      var request = http.request(options, function (response) {
-        common.logMessage('GET ' + path + ' HTTP status code: ' + response.statusCode);
-        response.setEncoding('utf8');
+      http.request(options, function (response) {
+                response.setEncoding('utf8');
         response.on('data', function (chunk) {
           payload += chunk;
         });
 
         response.on('end', function(){
+
+        common.logMessage('GET ' + path + ' HTTP status code: ' + response.statusCode);
+	if(response.statusCode != '200') {
+	  reject("status code: " + response.statusCode);
+	} else {
           //resolve the deferred object with the response
           var tmp = {}; tmp[path] = JSON.parse(payload);
           resolve(tmp);
+	}
         });
-      });
-
-      request.on('error', function(err) {
+      }).on('error', function(err) {
         //if an error occurs reject the deferred
         reject(err);
-      });
-
-      request.end();
+      }).end();
     });
   },
 
   // read data from hc2
-  readhc2 = function() {
+  readhc2 = function(from_timer) {
     // if at least one client is connected poll information from hc2
     if(clientsCount > 0) {
-      common.logMessage(clientsCount + " client(s) connected: polling data from HC2 to have up to date information");
+      if(typeof from_timer !== 'undefined' && from_timer) {
+         common.logMessage(clientsCount + " client(s) connected: polling data from HC2 to have up to date information");
+      } else {
+         common.logMessage("polling data from HC2");
+      }
 
       // promises required to build reply for clients
       return Promise.all([
         httpGet("/api/sections"),
-        httpGet("/api/rooms")
+        httpGet("/api/rooms"),
+        httpGet("/api/devices")
       ])
       .then(function(responses) {
+        common.logMessage("got all responses from promises");
         data = { action: 'print', data: responses };
-        timer = setTimeout(function() { readhc2(); }, hc2_settings.polling * 1000);
+        //timer = setTimeout(function() { readhc2(true); }, hc2_settings.polling * 1000);
         return data;
       });
     }
