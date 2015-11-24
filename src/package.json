@@ -5,7 +5,6 @@
   "description": "Node.js application to control home automation",
   "author": "Pierrick Brossin <pierrick@bs-network.net>",
   "dependencies": {
-    "websocket.io": "*",
-    "q": "*"
+    "websocket.io": "*"
   }
 }
