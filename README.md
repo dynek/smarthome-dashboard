@@ -53,6 +53,6 @@ Finally there's a very basic protocol between server and clients to do what is e
 - http://www.chartjs.org/
 
 ### What does the frontend look like?
-![Room](/dynek/smarthome-dashboard/blob/master/img/room.png?raw=true)
-![Graph](/dynek/smarthome-dashboard/blob/master/img/graph.png?raw=true)
-![Scenes](/dynek/smarthome-dashboard/blob/master/img/scenes.png?raw=true)
+![Room](/room.png?raw=true)
+![Graph](/graph.png?raw=true)
+![Scenes](/scenes.png?raw=true)
