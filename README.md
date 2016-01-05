@@ -44,7 +44,7 @@ When the docker container is generated from the Dockerfile, the src directory is
 HC2 state feedback: Upon its start, node.js creates/updates a given scene on the HC2. This scene is being triggered by any device change (value / value2) so that our app is notified when something happens on the HC2: it makes a simple GET towards port 2080 and the info is then relayed to homeautomation.js for handling.  
 Finally there's a very basic protocol between server and clients to do what is expected. I'll let you browse the code :-)
 
-### External component I used for this project:
+### External components I used for this project:
 - https://jquery.org
 - https://getbootstrap.com
 - https://github.com/mouse0270/bootstrap-growl
