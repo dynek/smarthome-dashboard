@@ -44,7 +44,7 @@ HC2 state feedback: Upon its start, node.js creates/updates a given scene on the
 Finally there's a very basic protocol between server and clients to do what is expected. I'll let you browse the code :-)
 
 ### External components I used for this project:
-I haven't committed these as they can be fetched directly. As-is the project will also be missing the CSS.
+I haven't committed these as they can be fetched directly. As-is the project will also be missing the CSS and fonts.
 - https://jquery.org
 - https://getbootstrap.com
 - https://github.com/mouse0270/bootstrap-growl
