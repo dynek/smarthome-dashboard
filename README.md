@@ -43,6 +43,25 @@ When the docker container is generated from the Dockerfile, the src directory is
 HC2 state feedback: Upon its start, node.js creates/updates a given scene on the HC2. This scene is being triggered by any device change (value / value2) so that our app is notified when something happens on the HC2: it makes a simple GET towards port 2080 and the info is then relayed to homeautomation.js for handling.  
 Finally there's a very basic protocol between server and clients to do what is expected. I'll let you browse the code :-)
 
+### "Protocol" used between server and clients
+Format: { action: "<action>",info: "<info>" }
+
+####server -> client
+actions:
+- schema (info = elements to build interface)
+- displayNotification (info = message/notification to be displayed)
+- deviceChanged (info.id = <id of device>, info.value|value2 = <value>)
+- dump (info = json/message to be dumped as-is)
+- reload (info = optional, delay before reloading page)
+- error (info = error message to display)
+
+####client -> server
+actions:
+- turnOn (info = id of element to which turnOn action should be sent)
+- turnOff (info = id of element to which turnOff action should be sent)
+- setValue (info.id = id of element to which new value should be sent, info.value = <value>)
+- setValue2 (info.id = id of element to which new value2 should be sent, info.value = <value2>)
+
 ### External components I used for this project:
 I haven't committed these as they can be fetched directly. As-is the project will also be missing the CSS and fonts.
 - https://jquery.org
