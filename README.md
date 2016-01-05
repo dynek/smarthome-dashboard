@@ -53,6 +53,6 @@ Finally there's a very basic protocol between server and clients to do what is e
 - http://www.chartjs.org/
 
 ### What does the frontend look like?
-![Room](/room.png?raw=true)
-![Graph](/graph.png?raw=true)
-![Scenes](/scenes.png?raw=true)
+![Room](/screenshots/room.png?raw=true)
+![Graph](/screenshots/graph.png?raw=true)
+![Scenes](/screenshots/scenes.png?raw=true)
