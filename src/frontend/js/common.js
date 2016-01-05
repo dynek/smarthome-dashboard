@@ -2,7 +2,7 @@
 "use strict";
 
 // include guard
-if(typeof __COMMON_JS !== 'undefined') { throw new Error("common.js was already included!"); }
+if(typeof __COMMON_JS !== 'undefined') { throw new Error("[COMMON] common.js was already included!"); }
 var __COMMON_JS = null;
 
 // common module
@@ -16,24 +16,24 @@ var common = function() {
   setDebug = function() {
     if(window.location.search.substring(1).indexOf(debugKeyWord) > -1) {
       this.debug = true;
-      this.logMessage("debug mode activated");
+      this.logMessage("[COMMON] debug mode activated");
     }
   },
 
   // log message to browser's console
-  logMessage = function(message) { if(this.debug) { console.log("[LOG] " + message); } },
+  logMessage = function(message) { if(this.debug) { console.log(message); } },
 
   // reload page with optional timeout
   reloadPage = function(timeout) {
-    if (typeof timeout === 'undefined' || timeout !== parseInt(timeout, 10)) {
-      this.logMessage("reloading page straight away");
+    if (typeof timeout === 'undefined' || timeout === null || timeout !== parseInt(timeout, 10)) {
+      this.logMessage("[COMMON] reloading page straight away");
       timeout = 0;
     } else {
-      this.logMessage("reloading page in " + timeout + "ms");
+      this.logMessage("[COMMON] reloading page in " + timeout + "ms");
     }
     setTimeout(function(){ window.location.reload() }, timeout);
   };
-
+ 
   // expose functions
   return {
     setDebug: setDebug,
