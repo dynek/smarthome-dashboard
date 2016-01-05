@@ -77,7 +77,7 @@ Their info helped me start the project:
 - http://weblogs.asp.net/dwahlin/building-an-html5-web-sockets-server-with-node-js
 - http://ahoj.io/nodejs-and-websocket-simple-chat-tutorial
 
-### What does the frontend look like?
+### What does my frontend look like?
 ![Room](/screenshots/room.png?raw=true)
 ![Graph](/screenshots/graph.png?raw=true)
 ![Scenes](/screenshots/scenes.png?raw=true)
