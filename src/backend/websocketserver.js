@@ -4,55 +4,57 @@
 // websocket server module
 var webSocketServer = function () {
 
-  // properties
+  // variables
   var common = require('./common'),
   homeautomation = require('./homeautomation'),
   socketDomain = require('domain').create(),
   ws = null,
 
+  // function managing listening for websocket traffic (discussion with clients)
   listen = function(port, hc2_settings) {
     // when we start listening instanciate homeautomation module
     homeautomation.init(hc2_settings);
 
     // catch domain error
     socketDomain.on('error', function(err) {
-      common.logMessage('Error caught in socket domain:' + err);
+      common.logMessage('[WEBSOCKETSERVER] error caught in socket domain:' + err);
     });
 
-    // within a domain, instanciate websocket server, have it listen and manage client connections
-    //socketDomain.run(function() {
+    // within domain, instanciate websocket server
+    socketDomain.run(function() {
       ws = require('websocket.io').listen(port);
 
       // occurs when a client connects
       ws.on('connection', function (clientSocket) {
-        common.logMessage("incoming websocket connection - number of clients: " + ws.clientsCount);
+        common.logMessage("[WEBSOCKETSERVER] incoming websocket connection - number of clients: " + ws.clientsCount);
 
         // update home automation module with client count
         homeautomation.setClientsCount(ws.clientsCount);
 
-        // send sections, rooms, devices, etc. to client that just connected
-        //var data = homeautomation.getData();
-        //if(data == null) { // data not yet ready, ask client to retry
-        //  sendMessage({ action: 'retry' }, clientSocket);
-        //} else {
-        //  sendMessage(data, clientSocket);
-        //}
-
+        // get HC2 data and send info to connecting client
         homeautomation.getData()
         .then(function(responses) {
-          //common.logMessage(JSON.stringify(responses));
-	  common.logMessage("getData success");
+          common.logMessage("[WEBSOCKETSERVER] homeautomation.getData() success");
           sendMessage(responses, clientSocket);
         }, function (err) {
-          //common.logMessage('Problem with request: ' + err);
-	  common.logMessage("getData failed");
-          common.logMessage(err);
-          sendMessage({ action: 'print', data: 'could not poll HC2 - hit refresh' }, clientSocket);
+          common.logMessage("[WEBSOCKETSERVER] homeautomation.getData() failed");
+          sendMessage({ action: 'error', info: 'error please try reloading page' }, clientSocket);
         });
 
-        // occurs when a message is received
-        clientSocket.on('message', function (data) {
-          common.logMessage("Message received: " + data);
+        // occurs when a message is received from a client
+        clientSocket.on('message', function (message) {
+          common.logMessage("[WEBSOCKETSERVER] message received from client");
+
+          // ensure data can be "transformed" to JSON
+          try {
+            var data = JSON.parse(message);
+          } catch (e) {
+            common.logMessage("[WEBSOCKETSERVER] it doesn't look like JSON: " + message);
+            return;
+          }
+
+          // parse json and act!
+          processJSON(data, clientSocket);
         });
 
         // occurs when the client closes its socket
@@ -60,24 +62,23 @@ var webSocketServer = function () {
           try {
             clientSocket.close();
             clientSocket.destroy();
-            common.logMessage('Socket closed');
+            common.logMessage("[WEBSOCKETSERVER] socket closed - number of clients: " + ws.clientsCount);
 
             // update home automation module with client count
             homeautomation.setClientsCount(ws.clientsCount);
-          } catch (e) {
-            common.logMessage(e);
+          } catch (err) {
+            common.logMessage("[WEBSOCKETSERVER] error: " + err);
           }
         });
       });
-    //});
+    });
   },
 
   // send message to one or all clients
   sendMessage = function(json, clientSocket) {
-    common.logMessage("Sending data");
     // if clientSocket is not specified message will be broadcasted to all clients
     if(typeof clientSocket === "undefined") {
-       common.logMessage("message will be broadcasted");
+       common.logMessage("[WEBSOCKETSERVER] broadcasting message");
        if (ws.clientsCount > 0) {
          for(var i=0; i<ws.clientsCount; i++) {
            try {
@@ -89,14 +90,53 @@ var webSocketServer = function () {
        }
     } else {
        // sending message to specific client
-       common.logMessage("message is targeting specific client");
+       common.logMessage("[WEBSOCKETSERVER] sending message to specific client");
        clientSocket.send(JSON.stringify(json));
+    }
+  },
+
+  // process incoming messages
+  processJSON = function(data, clientSocket) {
+    common.logMessage("processing JSON data");
+
+    // ensure action and data have been specified
+    if(typeof data.action === 'undefined') { common.logMessage("action is missing in received json"); return; }
+    if(typeof data.info === 'undefined') {  common.logMessage("info missing in received json"); return; }
+
+    // tasks based on action
+    switch(data.action) {
+      case "turnOn":
+        homeautomation.turnOn(data.info);
+        break;
+
+      case "turnOff":
+        homeautomation.turnOff(data.info);
+        break;
+
+      case "setValue":
+      case "setValue2":
+        if(typeof data.info.id === 'undefined') { common.logMessage("info missing id in received json"); return; }
+        if(typeof data.info.value === 'undefined') { common.logMessage("info missing value in received json"); return; }
+        if(data.action === "setValue") {
+          homeautomation.setValue(data.info.id, data.info.value);
+        } else {
+          homeautomation.setValue2(data.info.id, data.info.value);
+        }
+        break;
+
+      case "executeScene":
+        homeautomation.executeScene(data.info); 
+        break;
+
+      default:
+        common.logMessage("unknown action '" + data.action + "' specified in received json");
     }
   };
 
   // expose functions
   return {
-    listen: listen
+    listen: listen,
+    sendMessage: sendMessage
   };
 }();
 
