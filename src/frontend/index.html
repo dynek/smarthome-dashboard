@@ -1,15 +1,58 @@
 <!doctype html>
-<html>
   <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Home Automation Dashboard</title>
+
+    <!-- CSS -->
+    <link href="css/material-design-iconic-font.css" rel="stylesheet">
+    <link href="css/jquery.nouislider.min.css" rel="stylesheet">
+    <link href="css/app.min.css" rel="stylesheet">
+  </head>
+  <body>
+    <header id="header-2" class="clearfix" data-current-skin="lightblue">
+      <ul class="header-inner clearfix">
+        <li class="logo hidden-xs">
+          <a href="#" id="title"><span class="glyphicon glyphicon-home" aria-hidden="true"></span>&nbsp;&nbsp;Home Automation</a>
+        </li>
+      </ul>
+      <nav class="ha-menu">
+        <ul id="menu">
+          <!-- menu items will be populated here -->
+        </ul>
+      </nav>
+    </header>
+
+    <section id="main">
+      <section id="content">
+        <div class="container" id="containers">
+          <!-- containers will be populated here -->
+        </div>
+      </section>
+    </section>
+
+    <!-- Page Loader -->
+    <div class="page-loader">
+      <div class="preloader pls-blue">
+        <svg class="pl-circular" viewBox="25 25 50 50">
+          <circle class="plc-path" cx="50" cy="50" r="20" />
+        </svg>
+        <p>Please wait...</p>
+      </div>
+    </div>
+
+    <!-- for when we need an overlay to display something -->
+    <div id="overlay" class="hide"></div>
+
+    <!-- Javascript Libraries -->
     <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.nouislider.all.min.js"></script>
+    <script src="js/bootstrap-growl.min.js"></script>
+    <script src="js/chart.min.js"></script>
     <script src="js/common.js"></script>
     <script src="js/homeautomation.js"></script>
     <script src="js/websocketclient.js"></script>
     <script src="js/main.js"></script>
-  </head>
-<body>
-  <div id="container"></div>
-</body>
+  </body>
 </html>
