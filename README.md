@@ -5,7 +5,6 @@ I consider Fibaro HC2's web interface and smartphone application unusable. Inste
 * This project is still WIP and improvable.
 * I did not specifically create this application to be flexible, configurable, etc. It fits my needs and use-case.
 * I am definitely not a node.js, jquery, html, css, whatever developer. Lots of things are probably ugly and against best practices.
-* Everything (especially the CSS) need some cleaning
 
 ### My need
 I wanted to hang a tablet on a wall in my house to display some information, have a view and control Fibaro HC2 attached devices.  
@@ -45,6 +44,7 @@ HC2 state feedback: Upon its start, node.js creates/updates a given scene on the
 Finally there's a very basic protocol between server and clients to do what is expected. I'll let you browse the code :-)
 
 ### External components I used for this project:
+I haven't committed these as they can be fetched directly. As-is the project will also be missing the CSS.
 - https://jquery.org
 - https://getbootstrap.com
 - https://github.com/mouse0270/bootstrap-growl
