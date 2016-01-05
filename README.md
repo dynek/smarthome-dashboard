@@ -44,7 +44,7 @@ HC2 state feedback: Upon its start, node.js creates/updates a given scene on the
 Finally there's a very basic protocol between server and clients to do what is expected. I'll let you browse the code :-)
 
 ### "Protocol" used between server and clients
-Format: { action: "<action>",info: "<info>" }
+Format: { action: "\<action\>", info: "\<info\>" }
 
 ####server -> client
 actions:
