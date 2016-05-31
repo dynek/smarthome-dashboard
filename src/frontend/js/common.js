@@ -32,7 +32,7 @@ var common = function() {
       this.logMessage("[COMMON] reloading page in " + timeout + "ms");
     }
     setTimeout(function(){ window.location.reload() }, timeout);
-  };
+  },
 
   // add content into element based on ID starting with "cont-". Anything may follow.
   appendContent = function(id, content) {
