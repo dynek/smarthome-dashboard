@@ -33,12 +33,18 @@ var common = function() {
     }
     setTimeout(function(){ window.location.reload() }, timeout);
   };
+
+  // add content into element based on ID starting with "cont-". Anything may follow.
+  appendContent = function(id, content) {
+    $("#cont-" + id).append(content);
+  };
  
   // expose functions
   return {
     setDebug: setDebug,
     logMessage: logMessage,
     reloadPage: reloadPage,
+    appendContent: appendContent,
   };
 
 }();

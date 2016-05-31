@@ -107,6 +107,7 @@ var homeAutomation = function() {
         name: hc2_settings.sceneName,
         enabled: true,
         isLua: true,
+        maxRunningInstances: 10, // ensure scene is allowed to run side-by-side (10 times) in case it's triggered in parallel
         lua: '' // not currently possible to post lua code, only works on put
       };
 

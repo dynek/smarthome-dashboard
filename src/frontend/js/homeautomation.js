@@ -11,7 +11,7 @@ var __HOMEAUTOMATION_JS = null;
 // home automation module
 var homeautomation = function() {
 
-  // variable
+  // variables
   var MAX_STORAGE_ITEMS = 40, // "constant"
   DEVICE_TYPE_TO_HIDE = [ "com.fibaro.netatmoController", "com.fibaro.ipCamera", "com.fibaro.heatDetector", "com.fibaro.FGMS001", "com.fibaro.FGSS001" ], // "constant"
   devices = {},
@@ -148,11 +148,6 @@ var homeautomation = function() {
     </div>");
   },
 
-  // add content into page/room
-  appendContent = function(id, content) {
-    $("#cont-" + id).append(content);
-  },
-
   // add device in room
   addDevice = function(id, name, type, roomID, visible, value, value2) {
     // check that we want to display device
@@ -162,7 +157,7 @@ var homeautomation = function() {
         case "com.fibaro.binarySwitch":
           var checked = '';
           if(value == "true") { checked = ' checked'; }
-          appendContent(roomID, "<div class=\"col-lg-3\">\
+          common.appendContent(roomID, "<div class=\"col-lg-3\">\
 	  <div class=\"card\">\
 	  <div class=\"card-body card-body-small card-padding card-center\">\
 	  <div class=\"lv-header\">" + name + "</div>\
@@ -176,7 +171,7 @@ var homeautomation = function() {
           break;
 
         case "com.fibaro.multilevelSwitch":
-          appendContent(roomID, "<div class=\"col-lg-6\">\
+          common.appendContent(roomID, "<div class=\"col-lg-6\">\
 	  <div class=\"card\">\
 	  <div class=\"card-body card-body-small card-padding card-center\">\
 	  <div class=\"lv-header\">" + name + "</div>\
@@ -187,7 +182,7 @@ var homeautomation = function() {
 	  break;
 	
 	case "com.fibaro.FGRM222":
-	  appendContent(roomID, "<div class=\"col-lg-6\">\
+	  common.appendContent(roomID, "<div class=\"col-lg-6\">\
 	  <div class=\"card\">\
 	  <div class=\"card-body card-body-small card-padding card-center\">\
 	  <div class=\"lv-header\"><span class=\"glyphicon glyphicon-sort-by-attributes pull-left\" aria-hidden=\"true\"></span>" + name + "<span class=\"glyphicon glyphicon glyphicon-transfer pull-right\" aria-hidden=\"true\"></span></div>\
@@ -208,7 +203,7 @@ var homeautomation = function() {
 	case "com.fibaro.lightSensor":
 	case "com.fibaro.multilevelSensor":
 	case "com.fibaro.humiditySensor":
-	  appendContent(roomID, "<div class=\"col-lg-3\">\
+	  common.appendContent(roomID, "<div class=\"col-lg-3\">\
 	  <div class=\"card\">\
 	  <div class=\"card-body card-body-small card-padding card-center\">\
 	  <div class=\"lv-header\">" + name + "</div>\
@@ -219,7 +214,7 @@ var homeautomation = function() {
           break;
 
         case "com.fibaro.doorSensor":
-	  appendContent(roomID, "<div class=\"col-lg-3\">\
+	  common.appendContent(roomID, "<div class=\"col-lg-3\">\
 	  <div class=\"card\">\
 	  <div class=\"card-body card-body-small card-padding card-center\">\
 	  <div class=\"lv-header\">" + name + "</div>\
@@ -230,7 +225,7 @@ var homeautomation = function() {
           break;
 
 	default:
-          appendContent(roomID, "<div class=\"col-lg-3\">\
+          common.appendContent(roomID, "<div class=\"col-lg-3\">\
 	  <div class=\"card\">\
 	  <div class=\"card-body card-body-small card-padding card-center\">\
 	  <div class=\"lv-header\">" + id + " - " + name + "</div>\
@@ -251,7 +246,7 @@ var homeautomation = function() {
   addScene = function(data) {
     // if scene is enabled, is not running by itself and doesn't have any trigger
     if(data.enabled === true && data.autostart === false && data.hasTriggers === false) {
-      appendContent("scenes", "<div class=\"col-lg-4\">\
+      common.appendContent("scenes", "<div class=\"col-lg-4\">\
 	  <div class=\"card\">\
 	  <div class=\"card-body card-body-small card-padding card-center\">\
 	  <div class=\"lv-header\">" + data.name + "</div>\
@@ -492,7 +487,7 @@ var homeautomation = function() {
     addPage("dump", "Dump");
 
     // add dump into page
-    appendContent("dump", "<pre>" + JSON.stringify(data, null, 2) + "</pre>");
+    common.appendContent("dump", "<pre>" + JSON.stringify(data, null, 2) + "</pre>");
 
     // configure menu actions
     configureMenuActions();
