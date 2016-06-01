@@ -13,7 +13,7 @@ var homeautomation = function() {
 
   // variables
   var MAX_STORAGE_ITEMS = 40, // "constant"
-  DEVICE_TYPE_TO_HIDE = [ "com.fibaro.netatmoController", "com.fibaro.ipCamera", "com.fibaro.heatDetector", "com.fibaro.FGMS001", "com.fibaro.FGSS001" ], // "constant"
+  DEVICE_TYPE_TO_HIDE = [ "com.fibaro.netatmoController", "com.fibaro.ipCamera", "com.fibaro.heatDetector", "com.fibaro.FGMS001", "com.fibaro.FGSS001", "com.fibaro.FGFS101" ], // "constant"
   devices = {},
   storage = {},
 
@@ -445,15 +445,35 @@ var homeautomation = function() {
     }
 
     // add sections of house
-    $.each(data["/api/sections"].sort(sortFunc), function(key, value) { addMenuDropDownItem(value.id, value.name); });
+    $.each(data["/api/sections"].sort(sortFunc), function(key, value) {
+      // number of rooms in section
+      var matches = common.objGrep(data["/api/rooms"], "sectionID", value.id);
+      
+      // we don't want to display section->room using dropdown menu for one single room with same name as its section
+      if(matches.length == 1 && value.name === matches[0].name) {
+        // create array for device ID if it doesn't exist yet
+	if(typeof storage["folding"] === 'undefined') { storage["folding"] = []; }
+
+	// push section id to remember we want to fold it
+        storage["folding"].push(value.id);
+      } else if(matches.length > 1) {
+        // create dropdown menu for section
+        addMenuDropDownItem(value.id, value.name);
+      }
+    });
 
     // inject rooms in sections and create corresponding pages
     $.each(data["/api/rooms"].sort(sortFunc), function(key, value) {
-      // add sub menu item in corresponding house section
-      addMenuDropDownSubItem(value.id, value.name, value.sectionID);
+      // if we want to fold, add regular page
+      if(storage["folding"].indexOf(value.sectionID) >= 0) {
+        addPage(value.id, value.name);
+      } else {
+        // add sub menu item in corresponding house section
+        addMenuDropDownSubItem(value.id, value.name, value.sectionID);
 
-      // add room (similar to pages)
-      addRoom(value.id, value.name);
+        // add room (similar to pages)
+        addRoom(value.id, value.name);
+      }
     });
 
     // inject devices in rooms

@@ -37,6 +37,12 @@ var common = function() {
   // add content into element based on ID starting with "cont-". Anything may follow.
   appendContent = function(id, content) {
     $("#cont-" + id).append(content);
+  },
+
+  objGrep = function(array, property, value) {
+    return $.grep(array, function(test) {
+      return(test[property] === value);
+    });
   };
  
   // expose functions
@@ -45,6 +51,7 @@ var common = function() {
     logMessage: logMessage,
     reloadPage: reloadPage,
     appendContent: appendContent,
+    objGrep: objGrep,
   };
 
 }();
