@@ -528,32 +528,10 @@ var homeautomation = function() {
     $("#overlay").removeClass("hide");
   },
 
-  // display notification
-  displayNotification = function(data) {
-    common.logMessage("[HOMEAUTOMATION] received notification to display on-screen");
-
-    $.growl({
-      message: data
-    },{
-      type: "inverse",
-      allow_dismiss: true,
-      placement: {
-        from: 'top',
-        align: 'right'
-      },
-      delay: 0,
-      offset: {
-        x: 20,
-        y: 142
-      }
-    });
-  };
-
   // expose functions
   return {
     deviceChanged: deviceChanged,
     populateDashboard: populateDashboard,
-    displayNotification: displayNotification,
     displayDump: displayDump,
     displayError: displayError,
   };

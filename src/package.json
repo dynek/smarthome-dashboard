@@ -1,10 +1,10 @@
 {
   "name": "smarthome-dashboard",
   "private": true,
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Node.js application to control home automation",
   "author": "Pierrick Brossin <pierrick@bs-network.net>",
   "dependencies": {
-    "websocket.io": "*"
+    "ws": "*"
   }
 }
