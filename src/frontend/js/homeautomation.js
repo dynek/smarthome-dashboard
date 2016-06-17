@@ -188,10 +188,10 @@ var homeautomation = function() {
 	  <div class=\"lv-header\"><span class=\"glyphicon glyphicon-sort-by-attributes pull-left\" aria-hidden=\"true\"></span>" + name + "<span class=\"glyphicon glyphicon glyphicon-transfer pull-right\" aria-hidden=\"true\"></span></div>\
           <div class=\"row\">\
           <div class=\"col-lg-6\">\
-          <div class=\"input-slider\" id=\"dev-" + id + "\" data-id=\"" + id + "\" data-color=\"blue\" data-start=\"" + value + "\" data-step=\"5\" ></div>\
+          <div class=\"input-slider\" id=\"dev-" + id + "\" data-id=\"" + id + "\" data-start=\"" + value + "\" data-step=\"5\" ></div>\
           </div>\
           <div class=\"col-lg-6\">\
-          <div class=\"input-slider\" id=\"dev-" + id + "-2\" data-id=\"" + id + "\" data-color=\"blue\" data-start=\"" + value2 + "\" data-step=\"5\" data-value=\"value2\"></div>\
+          <div class=\"input-slider\" id=\"dev-" + id + "-2\" data-id=\"" + id + "\" data-start=\"" + value2 + "\" data-step=\"5\" data-value=\"value2\"></div>\
           </div>\
           </div>\
 	  </div>\
@@ -435,6 +435,9 @@ var homeautomation = function() {
 
     // add informations page with corresponding menu entry
     addPage("informations", "Informations");
+
+    // plugins
+    // this is were I load my plugins
 
     // add scenes page with corresponding menu entry
     if(typeof data["/api/scenes"] !== 'undefined') {
