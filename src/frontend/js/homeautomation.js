@@ -14,8 +14,10 @@ var homeautomation = function() {
   // variables
   var MAX_STORAGE_ITEMS = 40, // "constant"
   DEVICE_TYPE_TO_HIDE = [ "com.fibaro.netatmoController", "com.fibaro.ipCamera", "com.fibaro.heatDetector", "com.fibaro.FGMS001", "com.fibaro.FGSS001", "com.fibaro.FGFS101" ], // "constant"
+  TOUCH_TIMEOUT = 60, // 60 seconds
   devices = {},
   storage = {},
+  timeoutHandle,
 
   // sorting for what comes out the fibaro box
   sortFunc = function(a, b) { return a.sortOrder - b.sortOrder; },
@@ -257,38 +259,44 @@ var homeautomation = function() {
     }
   },
 
+  // display page
+  displayPage = function(pageId) {
+    // by default, hide overlay when moving page
+    $("#overlay").addClass("hide");
+
+    // all dropdown menus inactive first
+    $(".dropdown-menu").each(function() {
+      $(this).parent().removeClass("active");
+    });
+
+    // make active selected item
+    $(".menu-item").each(function() {
+      if($(this).data("id") !== pageId) {
+        $(this).parent().removeClass("active");
+      } else {
+        $(this).parent().addClass("active");
+        // activate dropdown menu (man, this is ugly)
+        if($(this).attr('class').toLowerCase().indexOf("submenu-item") >= 0) {
+          $(this).parent().parent().parent().addClass("active");
+        }
+      }
+    });
+
+    // hide all rooms except one selected
+    $(".pages").each(function() {
+      if(this.id !== "cont-" + pageId) {
+        $(this).addClass("hide");
+      } else {
+        $(this).removeClass("hide");
+      }
+    });
+  },
+
   // configure menu actions
   configureMenuActions = function() {
     // action when menu item is pressed
     $(".menu-item").click(function() {
-      var selectedMenuItem = $(this).data("id");
-
-      // all dropdown menus inactive first
-      $(".dropdown-menu").each(function() {
-        $(this).parent().removeClass("active");
-      });
-
-      // make active selected item
-      $(".menu-item").each(function() {
-        if($(this).data("id") !== selectedMenuItem) {
-          $(this).parent().removeClass("active");
-        } else {
-          $(this).parent().addClass("active");
-	  // activate dropdown menu (man, this is ugly)
-	  if($(this).attr('class').toLowerCase().indexOf("submenu-item") >= 0) {
-            $(this).parent().parent().parent().addClass("active");
-	  }
-        }
-      });
-
-      // hide all rooms except one selected
-      $(".pages").each(function() {
-        if(this.id !== "cont-" + selectedMenuItem) {
-          $(this).addClass("hide");
-        } else {
-          $(this).removeClass("hide");
-        }
-      });
+      displayPage($(this).data("id"));
     });
   },
 
@@ -399,15 +407,8 @@ var homeautomation = function() {
     // hide overlay
     $("#overlay").click(function() { $("#overlay").addClass("hide"); });
 
-    // hide all rooms except informations
-    $(".pages").each(function() {
-      if(this.id !== "cont-informations") {
-        $(this).addClass("hide");
-      }
-    });
-
-    // make active menu item
-    $("#menu-informations").parent().addClass("active");
+    // display informations page
+    displayPage("informations");
 
     // scenes "run" buttons
     $(".btn-scenes").click(function() {
@@ -423,6 +424,12 @@ var homeautomation = function() {
       // in x seconds enable button
       setTimeout(function () { btn.prop("disabled", false); }, 2000);
     });
+
+    // when nothing is clicked for x seconds, let's move to information page
+    $("body").click(function(){
+      clearTimeout(timeoutHandle);
+      timeoutHandle = setTimeout(function() { displayPage("informations"); }, TOUCH_TIMEOUT * 1000);
+    }); 
   },
 
   // populate menu and pages
@@ -437,7 +444,8 @@ var homeautomation = function() {
     addPage("informations", "Informations");
 
     // plugins
-    // this is were I load my plugins
+    plugin_forecast.getForecast(true);
+    plugin_calendar.getCalendar();
 
     // add scenes page with corresponding menu entry
     if(typeof data["/api/scenes"] !== 'undefined') {
@@ -498,7 +506,7 @@ var homeautomation = function() {
     common.logMessage("[HOMEAUTOMATION] done populating Dashboard and actions");
 
     // fadeOut page loader
-    setTimeout (function() { $('.page-loader').fadeOut(); }, 500);
+    setTimeout (function() { $('.page-loader').fadeOut(); }, 250);
   },
 
   // display raw message
@@ -529,7 +537,7 @@ var homeautomation = function() {
 
     // show overlay
     $("#overlay").removeClass("hide");
-  },
+  };
 
   // expose functions
   return {
