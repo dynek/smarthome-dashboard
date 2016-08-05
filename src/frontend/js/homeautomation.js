@@ -246,8 +246,8 @@ var homeautomation = function() {
 
   // add scenes to page
   addScene = function(data) {
-    // if scene is enabled, is not running by itself and doesn't have any trigger
-    if(data.enabled === true && data.autostart === false && data.hasTriggers === false) {
+    // if scene is visible, is not running by itself and doesn't have any trigger
+    if(data.visible === true && data.autostart === false && data.hasTriggers === false) {
       common.appendContent("scenes", "<div class=\"col-lg-4\">\
 	  <div class=\"card\">\
 	  <div class=\"card-body card-body-small card-padding card-center\">\
