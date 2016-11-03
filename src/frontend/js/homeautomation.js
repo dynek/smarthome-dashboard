@@ -537,12 +537,34 @@ var homeautomation = function() {
 
     // show overlay
     $("#overlay").removeClass("hide");
+  },
+
+  // display notification
+  displayNotification = function(data) {
+    common.logMessage("[HOMEAUTOMATION] received notification to display on-screen");
+
+    $.growl({
+      message: data.message
+    },{
+      type: data.type,
+      allow_dismiss: false,
+      placement: {
+        from: 'top',
+        align: 'right'
+      },
+      delay: 5000,
+      offset: {
+        x: 20,
+        y: 170
+      }
+    });
   };
 
   // expose functions
   return {
     deviceChanged: deviceChanged,
     populateDashboard: populateDashboard,
+    displayNotification: displayNotification,
     displayDump: displayDump,
     displayError: displayError,
   };

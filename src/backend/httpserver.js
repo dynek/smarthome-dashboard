@@ -43,6 +43,24 @@ var httpServer = function () {
 
           // call function that takes care of device status changes
           require('./homeautomation').deviceChangedStatus(query_string.id, valuetype, value);
+	} else if (pathname == '/notification') {
+	  // parse query string
+	  var query_string = url.parse(req.url, true).query;
+	  // proceed only if message was specified
+	  if(query_string.message) {
+	    var type = 'inverse';
+	    if(query_string.type) { type = query_string.type; }
+	    common.logMessage("[HTTPSERVER] received message to push to clients");
+	    res.writeHead(200, {'content-type': 'text/html'});
+	    res.write('OK');
+
+            require('./websocketserver').sendMessage({ "action": "displayNotification", info: { message: query_string.message, type: type } });
+	  } else {
+	    common.logMessage("[HTTPSERVER] received request to push message to clients but <message> is missing");
+	    res.writeHead(400, {'content-type': 'text/html'});
+	    res.write('Missing <message> query string');
+	  }
+	  res.end();
         } else {
           // read file on disk and serve it
           common.logMessage("[HTTPSERVER] client requested file: " + pathname);
