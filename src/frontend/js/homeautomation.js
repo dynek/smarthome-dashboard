@@ -13,7 +13,7 @@ var homeautomation = function() {
 
   // variables
   var MAX_STORAGE_ITEMS = 40, // "constant"
-  DEVICE_TYPE_TO_HIDE = [ "com.fibaro.netatmoController", "com.fibaro.ipCamera", "com.fibaro.heatDetector", "com.fibaro.FGMS001", "com.fibaro.FGSS001", "com.fibaro.FGFS101" ], // "constant"
+  DEVICE_TYPE_TO_HIDE = [ "com.fibaro.netatmoController", "com.fibaro.ipCamera", "com.fibaro.heatDetector", "com.fibaro.FGMS001", "com.fibaro.FGSS001", "com.fibaro.FGFS101", "virtual_device" ], // "constant"
   TOUCH_TIMEOUT = 60, // 60 seconds
   devices = {},
   storage = {},
