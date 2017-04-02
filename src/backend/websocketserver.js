@@ -8,8 +8,8 @@ var webSocketServer = function () {
   var common = require('./common'),
   homeautomation = require('./homeautomation'),
   socketDomain = require('domain').create(),
-  wss = require('ws').Server,
-  ws = null,
+  ws = require('ws'),
+  wss = null,
 
   // function managing listening for websocket traffic (discussion with clients)
   listen = function(port, hc2_settings) {
@@ -23,14 +23,14 @@ var webSocketServer = function () {
 
     // within domain, instanciate websocket server
     socketDomain.run(function() {
-      ws = new wss({ port: port });
+      wss = new ws.Server({ port: port });
 
       // occurs when a client connects
-      ws.on('connection', function (clientSocket) {
-        common.logMessage("[WEBSOCKETSERVER] incoming websocket connection - number of clients: " + this.clients.length);
+      wss.on('connection', function (clientSocket) {
+        common.logMessage("[WEBSOCKETSERVER] incoming websocket connection - number of clients: " + this.clients.size);
 
         // update home automation module with client count
-        homeautomation.setClientsCount(this.clients.length);
+        homeautomation.setClientsCount(this.clients.size);
 
         // get HC2 data and send info to connecting client
         homeautomation.getData()
@@ -61,10 +61,10 @@ var webSocketServer = function () {
         // occurs when the client closes its socket
         clientSocket.on('close', function () {
           try {
-            common.logMessage("[WEBSOCKETSERVER] socket closed - number of clients: " + ws.clients.length);
+            common.logMessage("[WEBSOCKETSERVER] socket closed - number of clients: " + wss.clients.size);
 
             // update home automation module with client count
-            homeautomation.setClientsCount(ws.clients.length);
+            homeautomation.setClientsCount(wss.clients.size);
           } catch (err) {
             common.logMessage("[WEBSOCKETSERVER] error: " + err);
           }
@@ -78,15 +78,15 @@ var webSocketServer = function () {
     // if clientSocket is not specified message will be broadcasted to all clients
     if(typeof clientSocket === "undefined") {
        common.logMessage("[WEBSOCKETSERVER] broadcasting message");
-       if (ws.clients.length > 0) {
-         for(var i=0; i<ws.clients.length; i++) {
-           try {
-             ws.clients[i].send(JSON.stringify(json));
-           } catch (e) {
+       wss.clients.forEach(function each(client) {
+         if (client.readyState === ws.OPEN) {
+	   try {
+             client.send(JSON.stringify(json));
+	   } catch (e) {
              common.logMessage(e);
-           }
+	   }
          }
-       }
+       });
     } else {
        // sending message to specific client
        common.logMessage("[WEBSOCKETSERVER] sending message to specific client");

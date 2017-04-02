@@ -1,22 +1,20 @@
-FROM debian:jessie
+FROM alpine:3.5
 
-ENV DEBIAN_FRONTEND noninteractive
+MAINTAINER Pierrick Brossin <github@bs-network.net>
 
-RUN apt-get update && \
-apt-get dist-upgrade --yes && \
-apt-get install curl --yes && \
-curl --silent --location https://deb.nodesource.com/setup_0.12 | bash - && \
-apt-get install --yes nodejs && \
-apt-get clean autoclean && \
-rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-# Bundle app source
-COPY ./src /src/
-# Install app dependencies
-RUN cd /src; npm install
-
+# exposed ports
 EXPOSE  2080
 EXPOSE  8888
+
+# install nodejs
+RUN apk --no-cache add nodejs
+
+# app sources
+COPY ./src /src/
+
+# install app dependencies
+RUN cd /src \
+ && npm install
 
 WORKDIR /
 

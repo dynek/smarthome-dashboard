@@ -246,7 +246,7 @@ var homeAutomation = function() {
 
         response.on('end', function(){
           common.logMessage('[HOMEAUTOMATION] ' + method + ' ' + path + ' HTTP status code: ' + response.statusCode);
-          if(response.statusCode != '200' && response.statusCode != '201') {
+          if(["200", "201", "202"].includes(response.statusCode)) {
             reject("http status code: " + response.statusCode);
           } else {
             //resolve the deferred object with the response
@@ -274,9 +274,9 @@ var homeAutomation = function() {
   },
 
   deviceChangedStatus = function(id, valuetype, value) {
+    common.logMessage("[HOMEAUTOMATION] device " + id + " " + valuetype + " changed to " + value);
     // if at least one client is connected send information
     if(clientsCount > 0) {
-      common.logMessage("[HOMEAUTOMATION] device " + id + " " + valuetype + " changed to " + value);
       var data = { "action": "deviceChanged", info: { "id": id } };
       data.info[valuetype] = value;
       require('./websocketserver').sendMessage(data);
