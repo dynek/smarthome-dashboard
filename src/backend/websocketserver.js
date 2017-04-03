@@ -23,7 +23,10 @@ var webSocketServer = function () {
 
     // within domain, instanciate websocket server
     socketDomain.run(function() {
-      wss = new ws.Server({ port: port });
+      wss = new ws.Server({
+        perMessageDeflate: false,
+        port: port
+      });
 
       // occurs when a client connects
       wss.on('connection', function (clientSocket) {
