@@ -132,21 +132,30 @@ var homeautomation = function() {
     addMenuItem(id, title);
 
     // create page
-    $("#containers").append("<div class=\"pages\" id=\"cont-" + id + "\">\
+    /*$("#containers").append("<div class=\"pages\" id=\"cont-" + id + "\">\
     <div class=\"block-header\">\
     <h2>" + title + "</h2>\
     </div>\
+    <div class=\"row\">\
+    </div>\
+    </div>");*/
+
+    // create page
+    $("#containers").append("<div class=\"pages\" id=\"cont-" + id + "\">\
     <div class=\"row\">\
     </div>\
     </div>");
   },
 
   // add room
-  addRoom = function(id, title) {
-    $("#containers").append("<div class=\"pages\" id=\"cont-" + id + "\">\
+  addRoom = function(id) {
+    /*$("#containers").append("<div class=\"pages\" id=\"cont-" + id + "\">\
     <div class=\"block-header\">\
     <h2>" + title + "</h2>\
     </div>\
+    </div>");*/
+
+    $("#containers").append("<div class=\"pages\" id=\"cont-" + id + "\">\
     </div>");
   },
 
@@ -248,11 +257,18 @@ var homeautomation = function() {
   addScene = function(data) {
     // if scene is visible, is not running by itself and doesn't have any trigger
     if(data.visible === true && data.autostart === false && data.hasTriggers === false) {
-      common.appendContent("scenes", "<div class=\"col-lg-4\">\
+      /*common.appendContent("scenes", "<div class=\"col-lg-4\">\
 	  <div class=\"card\">\
 	  <div class=\"card-body card-body-small card-padding card-center\">\
 	  <div class=\"lv-header\">" + data.name + "</div>\
 	  <button class=\"btn btn-primary btn-lg waves-effect btn-scenes\" data-id=\"" + data.id + "\">executer</button>\
+	  </div>\
+	  </div>\
+	  </div>");*/
+      common.appendContent("scenes", "<div class=\"col-lg-4\">\
+	  <div class=\"card\">\
+	  <div class=\"card-body card-body-small card-padding card-center\">\
+	  <button class=\"btn btn-primary btn-lg waves-effect btn-scenes\" data-id=\"" + data.id + "\">" + data.name + "</button>\
 	  </div>\
 	  </div>\
 	  </div>");
@@ -483,7 +499,8 @@ var homeautomation = function() {
         addMenuDropDownSubItem(value.id, value.name, value.sectionID);
 
         // add room (similar to pages)
-        addRoom(value.id, value.name);
+        //addRoom(value.id, value.name);
+        addRoom(value.id);
       }
     });
 
