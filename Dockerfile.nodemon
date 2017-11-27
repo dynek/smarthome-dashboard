@@ -6,9 +6,14 @@ MAINTAINER Pierrick Brossin <github@bs-network.net>
 EXPOSE  2080
 EXPOSE  8888
 
-RUN apk --no-cache add nodejs \
- && npm install -g nodemon \
- && mkdir -p /src/backend /src/frontend
+RUN set -ex \
+    && ALPINE_VERSION="$(sed -r 's|(\d+\.\d+).*|\1|' /etc/alpine-release)" \
+    && echo -e "https://alpine.global.ssl.fastly.net/alpine/v${ALPINE_VERSION}/main\nhttps://alpine.global.ssl.fastly.net/alpine/v${ALPINE_VERSION}/community" > /etc/apk/repositories \
+    && apk --no-cache upgrade \
+    && apk --no-cache add nodejs \
+    && npm install -g nodemon \
+    && cd / ; rm -rf /tmp/* /var/cache/apk/* \
+    && mkdir -p /src/backend /src/frontend
 
 # app sources
 COPY ./src/package.json /src/
