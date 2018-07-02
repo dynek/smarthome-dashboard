@@ -132,30 +132,21 @@ var homeautomation = function() {
     addMenuItem(id, title);
 
     // create page
-    /*$("#containers").append("<div class=\"pages\" id=\"cont-" + id + "\">\
+    $("#containers").append("<div class=\"pages\" id=\"cont-" + id + "\">\
     <div class=\"block-header\">\
     <h2>" + title + "</h2>\
     </div>\
-    <div class=\"row\">\
-    </div>\
-    </div>");*/
-
-    // create page
-    $("#containers").append("<div class=\"pages\" id=\"cont-" + id + "\">\
     <div class=\"row\">\
     </div>\
     </div>");
   },
 
   // add room
-  addRoom = function(id) {
-    /*$("#containers").append("<div class=\"pages\" id=\"cont-" + id + "\">\
+  addRoom = function(id, title) {
+    $("#containers").append("<div class=\"pages\" id=\"cont-" + id + "\">\
     <div class=\"block-header\">\
     <h2>" + title + "</h2>\
     </div>\
-    </div>");*/
-
-    $("#containers").append("<div class=\"pages\" id=\"cont-" + id + "\">\
     </div>");
   },
 
@@ -176,6 +167,17 @@ var homeautomation = function() {
           <input class=\"onOff\" data-id=\"" + id + "\" id=\"dev-" + id + "\" type=\"checkbox\" hidden=\"hidden\"" + checked + ">\
           <label for=\"dev-" + id + "\" class=\"ts-helper\"></label>\
 	  </div>\
+	  </div>\
+	  </div>\
+	  </div>");
+          break;
+
+        case "com.fibaro.binarySwitch#pushButton":
+          common.appendContent(roomID, "<div class=\"col-lg-3\">\
+	  <div class=\"card\">\
+	  <div class=\"card-body card-body-small card-padding card-center\">\
+	  <div class=\"lv-header\">" + name + "</div>\
+	  <button class=\"btn btn-primary btn-lg waves-effect btn-push\" data-id=\"" + id + "\">Appuyer</button>\
 	  </div>\
 	  </div>\
 	  </div>");
@@ -257,18 +259,11 @@ var homeautomation = function() {
   addScene = function(data) {
     // if scene is visible, is not running by itself and doesn't have any trigger
     if(data.visible === true && data.autostart === false && data.hasTriggers === false) {
-      /*common.appendContent("scenes", "<div class=\"col-lg-4\">\
+      common.appendContent("scenes", "<div class=\"col-lg-4\">\
 	  <div class=\"card\">\
 	  <div class=\"card-body card-body-small card-padding card-center\">\
 	  <div class=\"lv-header\">" + data.name + "</div>\
 	  <button class=\"btn btn-primary btn-lg waves-effect btn-scenes\" data-id=\"" + data.id + "\">executer</button>\
-	  </div>\
-	  </div>\
-	  </div>");*/
-      common.appendContent("scenes", "<div class=\"col-lg-4\">\
-	  <div class=\"card\">\
-	  <div class=\"card-body card-body-small card-padding card-center\">\
-	  <button class=\"btn btn-primary btn-lg waves-effect btn-scenes\" data-id=\"" + data.id + "\">" + data.name + "</button>\
 	  </div>\
 	  </div>\
 	  </div>");
@@ -426,6 +421,21 @@ var homeautomation = function() {
     // display informations page
     displayPage("informations");
 
+    // "run" for push buttons
+    $(".btn-push").click(function() {
+      // required for setTimeout
+      var btn = $(this);
+
+      // disable button
+      btn.prop("disabled", true);
+
+      // request scene execution
+      webSocketClient.sendMessage({ action: "turnOn", info: $(this).data("id") });
+
+      // in x seconds enable button
+      setTimeout(function () { btn.prop("disabled", false); }, 10000);
+    });
+
     // scenes "run" buttons
     $(".btn-scenes").click(function() {
       // required for setTimeout
@@ -446,6 +456,24 @@ var homeautomation = function() {
       clearTimeout(timeoutHandle);
       timeoutHandle = setTimeout(function() { displayPage("informations"); }, TOUCH_TIMEOUT * 1000);
     }); 
+
+    // every x seconds / minutes, let's check if modules all reported their values since x seconds / minutes
+    checkElapsedTime();
+  },
+
+  // check if modules recently reported their value
+  checkElapsedTime = function() {
+    common.logMessage("[HOMEAUTOMATION] running checkElapsedTime");
+    $.each(storage, function(deviceId, values) {
+      if($("#sensor-" + deviceId).length) {
+        var elapsedTime = Math.floor(((new Date).getTime() - Date.parse(values[values.length-1].timestamp)) / 1000);
+        if(elapsedTime > 21600) {
+          common.logMessage("[HOMEAUTOMATION] device/sensor #" + deviceId + " hasn't reported its value since " + elapsedTime + " seconds");
+          $("#sensor-" + deviceId).text("N/A");
+        }
+      }
+    });
+    setTimeout(function() { checkElapsedTime(); }, 900000);
   },
 
   // populate menu and pages
@@ -499,8 +527,7 @@ var homeautomation = function() {
         addMenuDropDownSubItem(value.id, value.name, value.sectionID);
 
         // add room (similar to pages)
-        //addRoom(value.id, value.name);
-        addRoom(value.id);
+        addRoom(value.id, value.name);
       }
     });
 
@@ -510,6 +537,12 @@ var homeautomation = function() {
       if(DEVICE_TYPE_TO_HIDE.indexOf(value.type) === -1) {
         // save devices information for later use
         devices[value.id] = { "name": value.name, "type": value.type, "roomID": value.roomID };
+
+        // if device is a binary switch with "push button" in the description, I'm assuming it's a push button and not regular on/off
+        if(value.type == "com.fibaro.binarySwitch" && value.properties.userDescription.match(/push button/i)) {
+	  // creating my type of push button :-)
+          value.type = "com.fibaro.binarySwitch#pushButton";
+	}
 
         // add device in room
         addDevice(value.id, value.name, value.type, value.roomID, value.visible, value.properties.value, value.properties.value2);

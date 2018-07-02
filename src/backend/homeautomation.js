@@ -88,7 +88,7 @@ var homeAutomation = function() {
 \ndeviceID = startSource[\"deviceID\"];\
 \n";
       if(common.isDebug()) { lua_scene += "\nfibaro:debug(\"ID: \"..deviceID..\" - \"..source..\": \"..fibaro:getValue(deviceID, source));"; }
-      lua_scene += "\nnet.HTTPClient():request(\"http://"+hc2_settings.myself+"/status?id=\"..deviceID..\"&\"..source..\"=\"..fibaro:getValue(deviceID, source));";
+      lua_scene += "\nnet.HTTPClient({ timeout = 1000 }):request(\"http://"+hc2_settings.myself+"/status?id=\"..deviceID..\"&\"..source..\"=\"..fibaro:getValue(deviceID, source));";
 
       // checking if scene already exists
       common.logMessage("[HOMEAUTOMATION] looping scenes to find '" + hc2_settings.sceneName + "'");

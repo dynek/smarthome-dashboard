@@ -41,7 +41,7 @@ var webSocketServer = function () {
           common.logMessage("[WEBSOCKETSERVER] homeautomation.getData() success");
           sendMessage(responses, clientSocket);
         }, function (err) {
-          common.logMessage("[WEBSOCKETSERVER] homeautomation.getData() failed");
+          common.logMessage("[WEBSOCKETSERVER] homeautomation.getData() failed: " + err);
           sendMessage({ action: 'error', info: 'error please try reloading page' }, clientSocket);
         });
 
