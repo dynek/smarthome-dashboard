@@ -467,7 +467,7 @@ var homeautomation = function() {
     $.each(storage, function(deviceId, values) {
       if($("#sensor-" + deviceId).length) {
         var elapsedTime = Math.floor(((new Date).getTime() - Date.parse(values[values.length-1].timestamp)) / 1000);
-        if(elapsedTime > 21600) {
+        if(elapsedTime > 43200) {
           common.logMessage("[HOMEAUTOMATION] device/sensor #" + deviceId + " hasn't reported its value since " + elapsedTime + " seconds");
           $("#sensor-" + deviceId).text("N/A");
         }
