@@ -241,7 +241,7 @@ var homeautomation = function() {
 	  common.appendContent(roomID, "<div class=\"col-lg-3\">\
 	  <div class=\"card\">\
 	  <div class=\"card-body card-body-small card-center\">\
-          <img alt=\"" + name + "\" src=\"" + value + "\" width=217 />\
+          <img class=\"img-btn\" alt=\"" + name + "\" id=\"camera-" + id + "\" width=217 />\
 	  </div>\
 	  </div>\
 	  </div>");
@@ -377,6 +377,17 @@ var homeautomation = function() {
       return false;
     });
 
+    // display overlay and image
+    $(".img-btn").click(function() {
+      var img = $(this);
+
+      // empty overlay and add popup div + chart canvas
+      $("#overlay").empty().append("<div class=\"popup\"><img alt=\"" + img.prop("alt") + "\" src=\"" + img.prop("src") + "\" width=800 /></div>");
+
+      // show overlay
+      $("#overlay").removeClass("hide");
+    });
+
     // display overlay and chart
     $(".graph-btn").click(function() {
       var deviceId = $(this).data("id");
@@ -486,6 +497,15 @@ var homeautomation = function() {
     setTimeout(function() { checkElapsedTime(); }, 900000);
   },
 
+  // refresh an element's attribute with value + timestamp (e.g. img src) if pageid matches current viewed page
+  refreshElement = function(roomId, id, attribute, value, timeout, firstLoop) {
+    if(typeof firstLoop === 'undefined' || firstLoop === true || $(".pages").not(".hide").attr('id') === "cont-" + roomId) {
+      common.logMessage("[HOMEAUTOMATION] refreshing element id: " + id + ", attribute: " + attribute + ", value: " + value);
+      $("#" + id).attr(attribute, value + "&t=" + new Date().getTime());
+    }
+    setTimeout(function() { refreshElement(roomId, id, attribute, value, timeout, false); }, timeout);
+  },
+
   // populate menu and pages
   populateDashboard = function(data) {
     // clear menu and pages
@@ -553,14 +573,14 @@ var homeautomation = function() {
 	  // creating my type of push button :-)
           value.type = "com.fibaro.binarySwitch#pushButton";
 	}
-
-        // if device is a camera, then value should been URL to snapshot
-        if(value.type == "com.fibaro.ipCamera") {
-          value.properties.value = (value.properties.httpsEnabled === 'true' ? "https" : "http") + "://" + value.properties.ip + "/" + value.properties.jpgPath;
-        }
-
+	
         // add device in room
         addDevice(value.id, value.name, value.type, value.roomID, value.visible, value.properties.value, value.properties.value2);
+
+        // if device is a camera, then refresh image on regular basis automatically
+        if(value.type == "com.fibaro.ipCamera") {
+          refreshElement(value.roomID, "camera-" + value.id, "src", (value.properties.httpsEnabled === 'true' ? "https" : "http") + "://" + value.properties.ip + "/" + value.properties.jpgPath, value.properties.refreshTime)
+	}
       }
     });
 
