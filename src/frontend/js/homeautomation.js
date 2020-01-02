@@ -13,7 +13,7 @@ var homeautomation = function() {
 
   // variables
   var MAX_STORAGE_ITEMS = 40, // "constant"
-  DEVICE_TYPE_TO_HIDE = [ "com.fibaro.netatmoController", "com.fibaro.ipCamera", "com.fibaro.heatDetector", "com.fibaro.FGMS001", "com.fibaro.FGSS001", "com.fibaro.FGFS101", "virtual_device" ], // "constant"
+  DEVICE_TYPE_TO_HIDE = [ "com.fibaro.netatmoController", "com.fibaro.heatDetector", "com.fibaro.FGMS001", "com.fibaro.FGSS001", "com.fibaro.FGFS101", "virtual_device" ], // "constant"
   TOUCH_TIMEOUT = 60, // 60 seconds
   devices = {},
   storage = {},
@@ -237,6 +237,16 @@ var homeautomation = function() {
 	  </div>");
           break;
 
+        case "com.fibaro.ipCamera":
+	  common.appendContent(roomID, "<div class=\"col-lg-3\">\
+	  <div class=\"card\">\
+	  <div class=\"card-body card-body-small card-center\">\
+          <img alt=\"" + name + "\" src=\"" + value + "\" width=217 />\
+	  </div>\
+	  </div>\
+	  </div>");
+          break;
+
 	default:
           common.appendContent(roomID, "<div class=\"col-lg-3\">\
 	  <div class=\"card\">\
@@ -428,7 +438,7 @@ var homeautomation = function() {
 
       // disable button
       btn.prop("disabled", true);
-
+      
       // request scene execution
       webSocketClient.sendMessage({ action: "turnOn", info: $(this).data("id") });
 
@@ -467,7 +477,7 @@ var homeautomation = function() {
     $.each(storage, function(deviceId, values) {
       if($("#sensor-" + deviceId).length) {
         var elapsedTime = Math.floor(((new Date).getTime() - Date.parse(values[values.length-1].timestamp)) / 1000);
-        if(elapsedTime > 43200) {
+        if(elapsedTime > 21600) {
           common.logMessage("[HOMEAUTOMATION] device/sensor #" + deviceId + " hasn't reported its value since " + elapsedTime + " seconds");
           $("#sensor-" + deviceId).text("N/A");
         }
@@ -543,6 +553,11 @@ var homeautomation = function() {
 	  // creating my type of push button :-)
           value.type = "com.fibaro.binarySwitch#pushButton";
 	}
+
+        // if device is a camera, then value should been URL to snapshot
+        if(value.type == "com.fibaro.ipCamera") {
+          value.properties.value = (value.properties.httpsEnabled === 'true' ? "https" : "http") + "://" + value.properties.ip + "/" + value.properties.jpgPath;
+        }
 
         // add device in room
         addDevice(value.id, value.name, value.type, value.roomID, value.visible, value.properties.value, value.properties.value2);
