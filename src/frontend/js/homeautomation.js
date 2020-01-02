@@ -382,7 +382,7 @@ var homeautomation = function() {
       var img = $(this);
 
       // empty overlay and add popup div + chart canvas
-      $("#overlay").empty().append("<div class=\"popup\"><img alt=\"" + img.prop("alt") + "\" src=\"" + img.prop("src") + "\" width=800 /></div>");
+      $("#overlay").empty().append("<div class=\"popup\"><img alt=\"" + img.prop("alt") + "\" src=\"" + img.prop("src") + "\" id=\"" + img.prop("id") + "-popup\" width=800 /></div>");
 
       // show overlay
       $("#overlay").removeClass("hide");
@@ -502,6 +502,10 @@ var homeautomation = function() {
     if(typeof firstLoop === 'undefined' || firstLoop === true || $(".pages").not(".hide").attr('id') === "cont-" + roomId) {
       common.logMessage("[HOMEAUTOMATION] refreshing element id: " + id + ", attribute: " + attribute + ", value: " + value);
       $("#" + id).attr(attribute, value + "&t=" + new Date().getTime());
+      if($("div#overlay").not(".hide").length) {
+        common.logMessage("[HOMEAUTOMATION] refreshing popup as well");
+        $("#" + id + "-popup").attr(attribute, value + "&t=" + new Date().getTime());
+      }
     }
     setTimeout(function() { refreshElement(roomId, id, attribute, value, timeout, false); }, timeout);
   },
